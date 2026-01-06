@@ -64,7 +64,7 @@ evilginx-pro-collection/
 ssh root@VOTRE_IP_VPS
 
 # Télécharger et exécuter le script d'installation
-curl -sSL https://raw.githubusercontent.com/VOTRE_USERNAME/evilginx-pro-collection/main/scripts/quick_deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/afriklabprojet/evilginx-pro-collection/main/scripts/quick_deploy.sh | bash
 ```
 
 **Ou installation manuelle :**
@@ -72,7 +72,7 @@ curl -sSL https://raw.githubusercontent.com/VOTRE_USERNAME/evilginx-pro-collecti
 ```bash
 # Cloner le repository
 cd /opt
-git clone https://github.com/VOTRE_USERNAME/evilginx-pro-collection.git
+git clone https://github.com/afriklabprojet/evilginx-pro-collection.git
 cd evilginx-pro-collection
 
 # Lancer l'installation
@@ -84,7 +84,7 @@ bash scripts/install_vps.sh
 
 ```bash
 # 1. Cloner le repository localement
-git clone https://github.com/VOTRE_USERNAME/evilginx-pro-collection.git
+git clone https://github.com/afriklabprojet/evilginx-pro-collection.git
 cd evilginx-pro-collection
 
 # 2. Copier vers le VPS

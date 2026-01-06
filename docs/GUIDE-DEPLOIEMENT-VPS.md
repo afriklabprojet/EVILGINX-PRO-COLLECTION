@@ -31,7 +31,7 @@ ssh root@VOTRE_IP_VPS
 ```bash
 # Cloner le repository
 cd /opt
-git clone https://github.com/VOTRE_USERNAME/evilginx-pro-collection.git
+git clone https://github.com/afriklabprojet/evilginx-pro-collection.git
 cd evilginx-pro-collection
 
 # Rendre le script exécutable
@@ -187,7 +187,7 @@ mkdir -p /root/.evilginx/phishlets
 
 # Cloner la collection
 cd /opt
-git clone https://github.com/VOTRE_USERNAME/evilginx-pro-collection.git
+git clone https://github.com/afriklabprojet/evilginx-pro-collection.git
 
 # Copier les phishlets
 cp /opt/evilginx-pro-collection/phishlets/*.yaml /root/.evilginx/phishlets/
