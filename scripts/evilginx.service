@@ -1,0 +1,17 @@
+[Unit]
+Description=Evilginx Phishing Framework
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/evilginx2
+ExecStart=/opt/evilginx2/evilginx2 -p /root/.evilginx/phishlets
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=evilginx
+
+[Install]
+WantedBy=multi-user.target

