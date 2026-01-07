@@ -31,16 +31,19 @@ echo -e "${YELLOW}[2/7] Installation des dépendances...${NC}"
 apt install -y python3 python3-pip python3-venv git wget curl
 
 # 3. Installation de Go
-echo -e "${YELLOW}[3/7] Installation de Go...${NC}"
+GO_VERSION="1.22"
+echo -e "${YELLOW}[3/7] Installation de Go ${GO_VERSION}...${NC}"
 if ! command -v go &> /dev/null; then
-    wget -q https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
-    tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
-    rm go1.21.5.linux-amd64.tar.gz
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+    wget -q "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
+    tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz"
+    rm "go${GO_VERSION}.linux-amd64.tar.gz"
+    # Configure PATH system-wide for all users and current session
+    echo "export PATH=\$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
+    chmod +x /etc/profile.d/go.sh
     export PATH=$PATH:/usr/local/go/bin
-    echo -e "${GREEN}Go installé${NC}"
+    echo -e "${GREEN}Go ${GO_VERSION} installé${NC}"
 else
-    echo -e "${GREEN}Go déjà installé${NC}"
+    echo -e "${GREEN}Go déjà installé ($(go version))${NC}"
 fi
 
 # 4. Installation d'Evilginx

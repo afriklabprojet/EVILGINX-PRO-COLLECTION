@@ -3,6 +3,7 @@
 ## 📋 Prérequis
 
 ### Matériel requis
+
 - **VPS** : Ubuntu 20.04/22.04 ou Debian 11/12
 - **RAM** : Minimum 2 GB (4 GB recommandé)
 - **CPU** : 2 cores minimum
@@ -10,6 +11,7 @@
 - **Accès** : SSH root
 
 ### Comptes nécessaires
+
 - ✅ Compte VPS (DigitalOcean, Vultr, AWS, etc.)
 - ✅ Domaine (Namecheap, GoDaddy, etc.)
 - ✅ Bot Telegram (via @BotFather)
@@ -46,6 +48,7 @@ bash scripts/install_vps.sh
 ```
 
 **Ce script va automatiquement :**
+
 - ✅ Mettre à jour le système
 - ✅ Installer Go, Python, Git
 - ✅ Compiler Evilginx2
@@ -63,6 +66,7 @@ nano /opt/evilginx-pro-collection/scripts/telegram_notifier.py
 ```
 
 **Modifier ces lignes :**
+
 ```python
 TELEGRAM_BOT_TOKEN = "VOTRE_BOT_TOKEN"  # Obtenu via @BotFather
 TELEGRAM_CHAT_ID = "VOTRE_CHAT_ID"      # Obtenu via @userinfobot
@@ -82,6 +86,7 @@ A       *           VOTRE_IP_VPS        300
 ```
 
 **Exemple avec `evil-domain.com` :**
+
 - `evil-domain.com` → `203.0.113.45`
 - `*.evil-domain.com` → `203.0.113.45`
 
@@ -96,6 +101,7 @@ cd /opt/evilginx2
 ```
 
 **Dans le prompt Evilginx :**
+
 ```
 : config domain votre-domaine.com
 : config ip VOTRE_IP_VPS
@@ -151,10 +157,10 @@ apt install -y git golang python3 python3-pip python3-venv wget curl screen
 ```bash
 # Télécharger Go
 cd /tmp
-wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.22.linux-amd64.tar.gz
 
 # Extraire
-tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.22.linux-amd64.tar.gz
 
 # Configurer PATH
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
@@ -214,11 +220,13 @@ nano scripts/telegram_notifier.py
 ### Étape 6 : Configuration des services systemd
 
 **Créer le service Evilginx :**
+
 ```bash
 nano /etc/systemd/system/evilginx.service
 ```
 
 **Contenu :**
+
 ```ini
 [Unit]
 Description=Evilginx Phishing Framework
@@ -237,11 +245,13 @@ WantedBy=multi-user.target
 ```
 
 **Créer le service Telegram :**
+
 ```bash
 nano /etc/systemd/system/telegram_notifier.service
 ```
 
 **Contenu :**
+
 ```ini
 [Unit]
 Description=Evilginx Telegram Notifier
@@ -260,6 +270,7 @@ WantedBy=multi-user.target
 ```
 
 **Activer les services :**
+
 ```bash
 systemctl daemon-reload
 systemctl enable evilginx
@@ -329,6 +340,7 @@ cd /opt/evilginx2
 ```
 
 **Commandes :**
+
 ```
 : config domain evil-domain.com
 : config ip VOTRE_IP_VPS
@@ -531,17 +543,20 @@ Pour accéder à Evilginx via l'interface web :
 ## 📚 RESSOURCES
 
 ### Documentation officielle
+
 - [Evilginx2 GitHub](https://github.com/kgretzky/evilginx2)
 - [Documentation Evilginx](https://help.evilginx.com)
 - [API Telegram Bot](https://core.telegram.org/bots/api)
 
 ### Fournisseurs VPS recommandés
+
 - [DigitalOcean](https://digitalocean.com) - $5/mois
 - [Vultr](https://vultr.com) - $5/mois
 - [Linode](https://linode.com) - $5/mois
 - [OVH](https://ovh.com) - €3.50/mois
 
 ### Registrars de domaines
+
 - [Namecheap](https://namecheap.com) - ~$10/an
 - [Google Domains](https://domains.google) - $12/an
 - [Cloudflare](https://cloudflare.com) - $8/an
@@ -551,6 +566,7 @@ Pour accéder à Evilginx via l'interface web :
 ## ⚠️ AVERTISSEMENT LÉGAL
 
 **CES OUTILS SONT DESTINÉS UNIQUEMENT À :**
+
 - ✅ Tests de sécurité autorisés par écrit
 - ✅ Exercices red team avec autorisation
 - ✅ Formation en cybersécurité
@@ -559,6 +575,7 @@ Pour accéder à Evilginx via l'interface web :
 **UTILISATION ILLÉGALE STRICTEMENT INTERDITE**
 
 L'utilisation non autorisée de ces outils peut entraîner :
+
 - Poursuites judiciaires
 - Amendes importantes
 - Emprisonnement

@@ -97,16 +97,17 @@ echo -e "${YELLOW}[ÉTAPE 4/9] Installation de Go...${NC}"
 if command -v go &> /dev/null; then
     echo -e "${GREEN}✓ Go déjà installé ($(go version))${NC}"
 else
-    GO_VERSION="1.21.5"
+    GO_VERSION="1.22"
     cd /tmp
     wget -q "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
     tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz"
     rm "go${GO_VERSION}.linux-amd64.tar.gz"
-    
-    # Configuration PATH
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc
+
+    # Configure PATH system-wide for all users and current session
+    echo "export PATH=\$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
+    chmod +x /etc/profile.d/go.sh
     export PATH=$PATH:/usr/local/go/bin
-    
+
     echo -e "${GREEN}✓ Go ${GO_VERSION} installé${NC}"
 fi
 
